@@ -25,7 +25,7 @@ image werknemer = im.FactorScale("werknemer.png", 1.8)
 ## 2. Variabelen & Dashboard
 ################################################################################
 default bedrijfsnaam    = "NeXio & Co"
-default budget          = 750000
+default budget          = 2500000
 default reputatie       = 100
 default security_waarde = 0
 default datalek         = False
@@ -59,9 +59,9 @@ define s    = Character("Sarah (IT Consultant)", image="sarah",    color="#3498d
 define m    = Character("Mark (CFO)",             image="mark",     color="#e67e22")
 define ceo_c = Character("CEO",                   image="ceo",      color="#9b59b6")
 define w    = Character("Lisa (Werknemer)",        image="werknemer",color="#27ae60")
-define news = Character("NIEUWS",                              color="#e74c3c")
-define mail = Character("E-MAILBOX",                           color="#ecf0f1")
-define sys  = Character("SYSTEEM",                             color="#f1c40f")
+define news = Character("NIEUWS",                                  color="#e74c3c")
+define mail = Character("E-MAILBOX",                               color="#ecf0f1")
+define sys  = Character("SYSTEEM",                                 color="#f1c40f")
 
 ################################################################################
 ## 3. Status Overlay
@@ -75,7 +75,7 @@ screen status_overlay():
         padding (18, 12)
         vbox:
             spacing 6
-            text "[ NeXio & Co ]" size 16 bold True color "#3498db"
+            text "[[ NeXio & Co ]" size 16 bold True color "#3498db"
             hbox:
                 spacing 8
                 text "BUDGET:"    size 16 color "#bdc3c7"
@@ -83,7 +83,7 @@ screen status_overlay():
             hbox:
                 spacing 8
                 text "REPUTATIE:" size 16 color "#bdc3c7"
-                text "[reputatie]%" size 18 bold True color "#f39c12"
+                text "[reputatie]%%" size 18 bold True color "#f39c12"
             hbox:
                 spacing 8
                 text "SECURITY:"  size 16 color "#bdc3c7"
@@ -95,40 +95,19 @@ screen status_overlay():
                     text "€ [lening:,d]" size 18 bold True color "#e74c3c"
 
 ################################################################################
-## HULPFUNCTIE: lening pop-up
-################################################################################
-screen lening_popup(bedrag, rente):
-    modal True
-    zorder 200
-    frame:
-        xalign 0.5
-        yalign 0.4
-        background Solid("#1a252fee")
-        padding (30, 20)
-        vbox:
-            spacing 12
-            text "⚠ ONVOLDOENDE BUDGET" size 22 bold True color "#e74c3c"
-            text "De bank biedt een noodlening aan:" size 18 color "#ecf0f1"
-            text "€ [bedrag:,d]  (terugbetalen: € [rente:,d])" size 18 color "#f39c12"
-            hbox:
-                spacing 20
-                textbutton "Accepteer lening" action Return(True)  style "button"
-                textbutton "Weiger"           action Return(False) style "button"
-
-################################################################################
 ## 4. INTRODUCTIE
 ################################################################################
 label start:
     scene black
     show screen status_overlay
 
-    "[ WELKOM BIJ NEXIO & CO ]"
+    "[[ WELKOM BIJ NEXIO & CO ]"
     "Het jaar is 2024. NeXio & Co is een snelgroeiend technologiebedrijf met 800 werknemers."
     "Na een reeks kleine beveiligingsincidenten heeft de Raad van Bestuur besloten: er komt een nieuwe Chief Security Officer."
     "Dat ben jij."
-    "Je takenpakket? Alle grote securitybeslissingen voor het komende kwartaal doorvoeren."
-    "Je start met een budget van €750.000. Elke euro die je uitgeeft, is er één minder voor je bonus."
-    "Maar bezuinig je te hard? Dan betaal je later een véél hogere prijs."
+    "Je takenpakket? Alle grote enterprise securitybeslissingen voor het komende kwartaal doorvoeren."
+    "Je start met een inhaalslag-budget van €2.500.000. Dat klinkt veel, maar IT is peperduur."
+    "Maar bezuinig je te hard? Dan betaal je later de ultieme prijs aan ransomware-groepen en de Autoriteit Persoonsgegevens."
     "Aan het einde van het kwartaal probeert een hackersgroep het bedrijf binnen te dringen. Jouw keuzes bepalen wat er dan gebeurt."
 
     scene bg boardroom with fade
@@ -137,7 +116,7 @@ label start:
     show werknemer at center with dissolve
 
     s "Goedemorgen! Ik ben Sarah, uw IT-consultant voor dit kwartaal. Ik zal u door alle beveiligingsbeslissingen loodsen."
-    m "Mark, CFO. Eén verzoek: houd de kosten in toom. We zijn geen bank."
+    m "Mark, CFO. Eén verzoek: houd de kosten in toom. We hebben €2,5 miljoen, maar dat moet ook nog andere gaten dichten."
     w "Lisa, ik vertegenwoordig de 800 werknemers. Wat u ook beslist – denk aan ons."
 
     jump deel1_identiteit
@@ -150,56 +129,73 @@ label deel1_identiteit:
     show sarah at left
     show mark  at right
 
-    "[ DEEL 1 — IDENTITEIT & TOEGANG ]"
+    "[[ DEEL 1 — IDENTITEIT & TOEGANG ]"
     s "We beginnen met het fundament: wie mag wat doen binnen onze systemen?"
 
     ## --- 5A: MFA ---
 label menu_mfa:
     s "Punt één: Two-Factor Authentication (2FA/MFA). Op dit moment logt iedereen in met alleen een wachtwoord."
     m "Kost dat iets?"
-    s "Enterprise MFA-platform: €55.000 eenmalig. Alternatief: gratis Google Authenticator, maar dan handmatig uitrollen. Dat kost maanden werk en mensen gaan het omzeilen."
+    s "Een enterprise MFA-platform uitrollen voor 800 man inclusief licenties, integratie en hardware-tokens voor de magazijnmedewerkers: €120.000."
 
     menu:
-        "Koop Enterprise MFA-platform (-€55.000)":
-            if budget - 55000 < 0:
-                jump lening_mfa
-            $ budget -= 55000
+        "Koop Enterprise MFA-platform (-€120.000)":
+            if budget < 120000:
+                m "Budget is ontoereikend. De bank biedt een lening van €200.000 aan (terugbetalen: €240.000)."
+                menu:
+                    "Accepteer lening":
+                        $ aantal_leningen += 1
+                        $ budget += 200000
+                        $ lening += 240000
+                    "Weiger lening":
+                        s "Dan moeten we een andere optie kiezen voor MFA."
+                        jump menu_mfa
+                        
+            $ budget -= 120000
             $ security_waarde += 40
             $ heeft_mfa = True
-            s "Uitstekend. Elke medewerker logt nu in met wachtwoord + telefoon. Zelfs een gelekt wachtwoord is nutteloos voor aanvallers."
-            m "Duur, maar ik snap het."
+            s "Uitstekend. Elke medewerker logt nu in met wachtwoord + token. Zelfs een gelekt wachtwoord is nutteloos."
+            m "Flinke uitgave, maar ik snap het."
         
         "Verplicht gratis Google Authenticator (+€0, maar reputatieverlies)":
             $ reputatie -= 10
             $ security_waarde += 20
             $ heeft_mfa = True
-            s "Het werkt, maar de uitrol duurt twee maanden en 30% van de medewerkers gaat het 'tijdelijk' overslaan. Risico blijft."
-            w "Ik vind het heel omslachtig eerlijk gezegd..."
+            s "Het werkt, maar de uitrol is een drama en 30%% van de medewerkers gaat het 'tijdelijk' overslaan omdat we het niet kunnen afdwingen."
+            w "Ik vind het echt onwerkbaar zonder goede support..."
         
         "MFA overslaan, wachtwoorden zijn voldoende (+€0)":
             $ security_waarde -= 20
-            s "Dat is een serieus risico. Elke phishing-aanval die een wachtwoord buitmaakt, geeft direct toegang tot het systeem."
-            m "Maar het kost niks. Lekker."
+            s "Dat is suïcidaal. Elke phishing-aanval die een wachtwoord buitmaakt, geeft direct toegang tot het systeem."
+            m "Maar het bespaart een ton. Lekker."
 
     ## --- 5B: Wachtwoorden ---
 label menu_wachtwoorden:
-    s "Punt twee: wachtwoordbeleid. We moeten wachtwoorden instellen voor de Klantendatabase en het Admin-paneel."
-    m "Ik hoor mensen nu al zuchten als ik 'wachtwoord' zeg."
+    s "Punt twee: wachtwoordbeleid voor de Klantendatabase en het Admin-paneel."
 
     menu:
-        "Koop Password Manager licenties voor alle medewerkers (-€35.000)":
-            if budget - 35000 < 0:
-                jump lening_wachtwoord
-            $ budget -= 35000
+        "Koop Enterprise Password Manager licenties (-€65.000)":
+            if budget < 65000:
+                m "Budget is ontoereikend. De bank biedt €100.000 aan (terugbetalen: €120.000)."
+                menu:
+                    "Accepteer lening":
+                        $ aantal_leningen += 1
+                        $ budget += 100000
+                        $ lening += 120000
+                    "Weiger lening":
+                        s "Kies dan een ander wachtwoordbeleid."
+                        jump menu_wachtwoorden
+                        
+            $ budget -= 65000
             $ security_waarde += 35
-            s "Perfect. Unieke, complexe wachtwoorden per dienst. Niemand hoeft meer iets te onthouden of op te schrijven."
+            s "Perfect. Unieke, complexe wachtwoorden per dienst. Niemand hoeft meer iets te onthouden."
             w "Oh, dat is eigenlijk wel handig!"
         
-        "Verplicht wachtwoord wijzigen elke 3 maanden (-€8.000)":
-            $ budget -= 8000
+        "Verplicht wachtwoord wijzigen elke 3 maanden (-€15.000 voor IT-support overuren)":
+            $ budget -= 15000
             $ security_waarde += 5
             $ reputatie -= 15
-            s "Dit werkt averechts. Mensen gaan 'Nexio2024!' veranderen in 'Nexio2025!'. Schijnveiligheid."
+            s "Mensen gaan 'Nexio2024!' veranderen in 'Nexio2025!'. Schijnveiligheid en de helpdesk stroomt vol."
             m "Maar we voldoen aan de regelgeving. Mooi."
             w "Ik haat dit al. Echt."
         
@@ -212,7 +208,7 @@ label menu_wachtwoorden:
             if ww_database == ww_admin:
                 $ wachtwoorden_gelijk = True
                 $ security_waarde -= 50
-                s "BEIDE wachtwoorden zijn '[ww_database]'?! Als één lek is, is ALLES lek. Dit is een ramp in wording."
+                s "BEIDE wachtwoorden zijn '[ww_database]'?! Als één lek is, is ALLES lek. Een ramp in wording."
                 m "Gemakkelijk te onthouden! Efficiënt!"
             elif ww_database.lower() in ["admin", "1234", "password", "nexio", "welkom", "123456"] or ww_admin.lower() in ["admin", "1234", "password", "nexio", "welkom", "123456"]:
                 $ dom_wachtwoord = True
@@ -220,25 +216,23 @@ label menu_wachtwoorden:
                 s "Echt?! '[ww_database]' en '[ww_admin]'? Een script raadt dit in seconden."
             else:
                 $ security_waarde -= 10
-                s "Ze zijn tenminste verschillend. Maar gedeelde wachtwoorden blijven kwetsbaar. Zet het nergens op!"
+                s "Ze zijn tenminste verschillend. Maar gedeelde wachtwoorden blijven extreem kwetsbaar."
 
     ## --- 5C: Open Google Drive ---
 label menu_googledrive:
-    s "Punt drie: onze gedeelde mappen. Op dit moment staat de Google Drive van de marketingafdeling op 'Openbaar toegankelijk'. Iedereen met de link kan alles zien."
-    m "Maar zo werken we makkelijk samen met externe partners!"
+    s "Punt drie: Onze cloud-opslag. Veel klantdata staat op openbaar gedeelde links in Google Drive."
 
     menu:
-        "Sluit de Drive, implementeer toegangsbeleid (-€15.000 voor training)":
-            $ budget -= 15000
+        "Implementeer streng Cloud Security Posture Management (CSPM) (-€35.000)":
+            $ budget -= 35000
             $ security_waarde += 25
-            s "Slim. Alleen geautoriseerde medewerkers en goedgekeurde partners krijgen nu toegang."
+            s "Slim. Geautomatiseerde controles scannen continu of we per ongeluk data openzetten naar het internet."
         
-        "Laat het open, maar zet er een waarschuwing bij (+€0)":
+        "Laat het open, stuur een waarschuwingsmail (+€0)":
             $ open_googledrive = True
             $ security_waarde -= 15
-            s "Een waarschuwing helpt niet. Gevoelige klantdata staat gewoon open op het internet."
+            s "Een mailtje helpt niet. Gevoelige klantdata staat gewoon open op het internet. Google indexeert dit gewoon."
             m "Niemand weet toch hoe ze dat moeten vinden?"
-            s "Mark... Google kan dat indexeren."
 
     ## --- 5D: Ontslagen werknemer ---
 label menu_ontslagen_werknemer:
@@ -246,25 +240,32 @@ label menu_ontslagen_werknemer:
     show ceo_c at center with dissolve
     show sarah at left
 
-    s "Belangrijk: volgende week wordt een senior medewerker ontslagen wegens wangedrag. Die persoon heeft nu nog toegang tot alle systemen, klantdata en de mailserver."
+    s "Er wordt volgende week een senior ontslagen. Er bestaat geautomatiseerde Identity & Access (IAM) software die zijn toegang over de hele linie in één seconde afsluit."
     ceo_c "Kunnen we die toegang niet gewoon handmatig intrekken na het gesprek?"
-    s "Dat duurt minstens 48 uur via IT. Er bestaat geautomatiseerde software die het bij ontslag direct afsluit."
 
     menu:
-        "Koop automated offboarding software (-€28.000)":
-            if budget - 28000 < 0:
-                jump lening_offboarding
-            $ budget -= 28000
+        "Koop IAM automated offboarding integratie (-€85.000)":
+            if budget < 85000:
+                m "Budget te laag. Lening van €100.000 nodig (terugbetalen: €120.000)."
+                menu:
+                    "Accepteer lening":
+                        $ aantal_leningen += 1
+                        $ budget += 100000
+                        $ lening += 120000
+                    "Weiger lening":
+                        s "Dan kan je deze software niet betalen."
+                        jump menu_ontslagen_werknemer
+                        
+            $ budget -= 85000
             $ security_waarde += 30
             $ auto_blokkering = True
-            s "Uitstekend. Op het moment dat HR op 'bevestigen' drukt, zijn alle accounts geblokkeerd. Geen kans op wraakactie."
+            s "Duur, maar noodzakelijk. Zodra HR hem afmeldt, verliest hij letterlijk elke vorm van toegang."
         
         "Handmatig regelen via IT, duurt 48 uur (+€0)":
             $ security_waarde -= 20
             $ reputatie -= 5
-            s "48 uur is lang. Een ontevreden ex-werknemer kan in die tijd veel schade aanrichten of data doorspelen aan concurrenten."
+            s "Een ontevreden techneut kan in 48 uur makkelijk onze hele codebase klonen of servers wissen."
             m "We hebben toch vertrouwen in onze mensen?"
-            s "Tot we dat niet meer hebben, ja."
 
     ## --- 5E: Developer admin-rechten ---
 label menu_developer_admin:
@@ -272,79 +273,37 @@ label menu_developer_admin:
     show sarah at left
     show mark  at right
 
-    s "Laatste punt in dit blok: de developers klagen. Ze willen admin-rechten op de productieomgeving zodat ze niet steeds IT hoeven te vragen."
-    m "Ze zijn toch al de hele dag aan het wachten. Geef ze gewoon die rechten."
+    s "De developers klagen. Ze willen admin-rechten op de productieomgeving. Ze weigeren steeds IT-tickets aan te maken."
 
     menu:
         "Geef developers volledige admin-rechten (+€0, snel)":
             $ developer_admin = True
             $ security_waarde -= 25
             $ reputatie += 5
-            s "Als één developer-account gehackt wordt, heeft de aanvaller nu admin-toegang tot alles. Principe van 'least privilege' is hier volledig losgelaten."
+            s "Als één dev gephisht wordt, is het hele bedrijf direct van de hacker."
         
-        "Implementeer Privileged Access Management (-€40.000)":
-            if budget - 40000 < 0:
-                jump lening_pam
-            $ budget -= 40000
+        "Implementeer Privileged Access Management (PAM) (-€150.000)":
+            if budget < 150000:
+                m "Budget te laag. Lening van €200.000 (terugbetalen: €240.000) nodig."
+                menu:
+                    "Accepteer lening":
+                        $ aantal_leningen += 1
+                        $ budget += 200000
+                        $ lening += 240000
+                    "Weiger lening":
+                        s "Je hebt hier niet genoeg budget voor."
+                        jump menu_developer_admin
+                        
+            $ budget -= 150000
             $ security_waarde += 35
-            s "Goed. Developers krijgen tijdelijke verhoogde rechten via een PAM-systeem met logging. Flexibel én veilig."
+            s "Een forse investering, maar ze krijgen nu dynamisch tijdelijke admin-rechten die volledig gelogd en gefilmd worden."
         
         "Weiger, procedures blijven zoals ze zijn (+€0)":
             $ reputatie -= 10
             $ security_waarde += 10
-            s "Veilig, maar de developers zijn woedend. Productiviteit daalt. Sommigen gaan 'creatieve' omwegen zoeken."
-            w "Ik heb al iemand horen zeggen dat ze gewoon lokaal gaan werken..."
+            s "Veilig, maar de developers zijn woedend. Sommigen gaan 'creatieve' omwegen zoeken."
 
     jump deel2_endpoints
-
-################################################################################
-## Lening-tussenscenes Deel 1
-################################################################################
-label lening_mfa:
-    m "Budget is ontoereikend. De bank biedt €80.000 aan (terugbetalen: €96.000)."
-    menu:
-        "Accepteer lening":
-            $ aantal_leningen += 1
-            $ budget += 80000
-            $ lening += 96000
-        "Weiger, sla MFA over":
-            $ security_waarde -= 20
-            s "Dat begrijp ik niet, maar oké."
-    jump menu_mfa
-
-label lening_wachtwoord:
-    m "Budget is ontoereikend. De bank biedt €50.000 aan (terugbetalen: €60.000)."
-    menu:
-        "Accepteer lening":
-            $ aantal_leningen += 1
-            $ budget += 50000
-            $ lening += 60000
-        "Weiger, gebruik zelf verzinnen":
-            pass
-    jump menu_wachtwoorden
-
-label lening_offboarding:
-    m "Budget te laag. Lening van €40.000 (terugbetalen: €48.000)?"
-    menu:
-        "Accepteer lening":
-            $ aantal_leningen += 1
-            $ budget += 40000
-            $ lening += 48000
-        "Weiger":
-            $ security_waarde -= 20
-            s "Dan doen we het handmatig. 48 uur risico."
-    jump menu_ontslagen_werknemer
-
-label lening_pam:
-    m "Budget te laag. Lening van €55.000 (terugbetalen: €66.000)?"
-    menu:
-        "Accepteer lening":
-            $ aantal_leningen += 1
-            $ budget += 55000
-            $ lening += 66000
-        "Weiger":
-            pass
-    jump menu_developer_admin
 
 ################################################################################
 ## 6. DEEL 2: Apparaten & Endpoints
@@ -354,85 +313,79 @@ label deel2_endpoints:
     show sarah at left with dissolve
     show mark  at right with dissolve
 
-    "[ DEEL 2 — APPARATEN & ENDPOINTS ]"
-    s "Goed, we gaan naar de apparaten. Endpoints zijn de voordeur van elke aanval."
+    "[[ DEEL 2 — APPARATEN & ENDPOINTS ]"
 
     ## --- 6A: Updates ---
 label menu_updates:
-    s "Onze systemen draaien deels op software met bekende kritieke beveiligingslekken. Er is een grote update-campagne nodig: alle 800 machines."
-    m "Dat betekent downtime. Werknemers klagen altijd over die verplichte herstarts."
+    s "Er is een kritieke update-campagne nodig voor alle 800 endpoints en 50 servers."
 
     menu:
-        "Automatisch patchbeheer invoeren (-€20.000)":
-            if budget - 20000 < 0:
-                m "Budget te laag."
+        "Enterprise geautomatiseerd patchbeheer invoeren (-€75.000)":
+            if budget < 75000:
+                m "Budget te laag. We moeten dit overslaan."
                 $ updates_genegeerd = True
                 jump menu_iot
-            $ budget -= 20000
+            $ budget -= 75000
             $ security_waarde += 30
-            s "Alle systemen worden buiten werktijden automatisch bijgewerkt. Geen downtime, geen excuses."
+            s "Alle systemen worden strak up-to-date gehouden zonder downtime."
         
-        "Eenmalige handmatige update-campagne (-€5.000)":
-            $ budget -= 5000
+        "Eenmalige handmatige update-campagne (-€15.000)":
+            $ budget -= 15000
             $ security_waarde += 10
             s "Beter dan niks, maar over zes maanden staan we opnieuw achter."
         
         "Updates uitstellen tot na het kwartaal (+€0)":
             $ updates_genegeerd = True
             $ security_waarde -= 30
-            s "Dit is hoe 90% van de succesvolle hacks beginnen. Bekende lekken, niet gepatcht."
+            s "Dit is hoe 90%% van de succesvolle hacks beginnen."
             m "Maar iedereen is productief! Geen gemopperde herstarts!"
 
     ## --- 6B: Onveilige IoT ---
 label menu_iot:
-    s "We hebben 45 IP-camera's en smart thermostaten in het gebouw. Ze draaien allemaal op de standaard fabriekswachtwoorden."
-    m "Ze werken toch? Camera's laten licht knipperen, thermostaat regelt temperatuur..."
+    s "Onze 45 IP-camera's en thermostaten draaien op standaard wachtwoorden op het hoofdnetwerk."
 
     menu:
-        "Isoleer IoT op apart netwerksegment + wijzig wachtwoorden (-€18.000)":
-            if budget - 18000 < 0:
-                m "Budget te laag, overslaan."
+        "Netwerk engineering: Isoleer IoT op aparte VLANs (-€45.000)":
+            if budget < 45000:
+                m "Budget te laag, we slaan dit over."
                 $ onveilige_iot = True
                 jump menu_byod
-            $ budget -= 18000
+            $ budget -= 45000
             $ security_waarde += 25
             $ onveilige_iot = False
-            s "Goed. Zelfs als een camera gehackt wordt, kan de aanvaller niet bij onze servers."
+            s "Netjes. Als een thermostaat gehackt wordt, stranden ze in dat afgesloten netwerkje."
         
-        "Alleen wachtwoorden wijzigen (-€3.000)":
-            $ budget -= 3000
+        "Alleen wachtwoorden wijzigen (-€8.000)":
+            $ budget -= 8000
             $ security_waarde += 10
             s "Beter, maar ze zitten nog steeds op hetzelfde netwerk als de servers. Niet ideaal."
         
         "Laat alles zoals het is (+€0)":
             $ onveilige_iot = True
             $ security_waarde -= 20
-            s "IP-camera's zijn een favoriete toegangspoort voor aanvallers. Ze zijn krachtig, altijd aan, en niemand let erop."
+            s "Camera's zijn een favoriete voordeur voor Russische botnets."
 
     ## --- 6C: BYOD (eigen laptop) ---
 label menu_byod:
     show werknemer at center with dissolve
-    w "Eh... ik wilde vragen: mijn werkcomputer doet raar. Mag ik tijdelijk mijn privé-laptop gebruiken?"
-    s "Dit is precies het vraagstuk: Bring Your Own Device. Privé-laptops hebben mogelijk geen antivirusupdates, kunnen geïnfecteerd zijn, en verbinden straks met ons netwerk."
+    w "Mag ik tijdelijk mijn privé-laptop gebruiken? Mijn werk-laptop is stuk."
 
     menu:
-        "Nee, lever een tijdelijke leencomputer uit (-€500 per geval, geregeld in beleid -€10.000)":
-            $ budget -= 10000
+        "Nee, bouw een pool van zakelijke leen-laptops op (-€40.000)":
+            $ budget -= 40000
             $ security_waarde += 20
             w "Oh, dat is eerlijk eigenlijk."
-            s "Goed beleid. Geen onbekende apparaten op ons netwerk."
+            s "We houden schimmige privé-apparatuur mooi buiten de deur."
         
         "Ja, maar alleen via VPN en op een apart gastnetwerk (+€0)":
             $ byod_risico = False
             $ security_waarde += 5
             s "Redelijk compromis. Niet perfect, maar geïsoleerd."
-            w "Top, dankjewel!"
         
-        "Ja, gewoon op het normale netwerk (+€0, snel)":
+        "Ja, gewoon op het normale netwerk (+€0)":
             $ byod_risico = True
             $ security_waarde -= 25
-            s "Als die laptop een keylogger heeft, lezen aanvallers straks alles wat getypt wordt op ons netwerk."
-            m "Ze kunnen toch gewoon voorzichtig zijn?"
+            s "Met één geïnfecteerde privé-laptop infecteren we straks het hele kantoor."
 
     ## --- 6D: CEO-laptop verloren ---
 label menu_ceo_laptop:
@@ -441,17 +394,15 @@ label menu_ceo_laptop:
     show ceo_c at center with dissolve
     show sarah at left
 
-    ceo_c "Sarah... ik heb mijn laptop in de trein laten liggen. Ik had er gisteren nog klantcontracten op staan."
-    s "Is de schijf versleuteld? Is er een remote-wipe ingesteld?"
+    ceo_c "Ik heb mijn laptop met de fusie-contracten in de trein laten liggen..."
 
     menu:
-        "We hadden full-disk encryptie + remote wipe ingesteld (-€0, als het er was)":
+        "We hadden Mobile Device Management & Encryptie (-€0, mits security hoog is)":
             if security_waarde >= 30:
                 $ security_waarde += 10
-                s "Dan is er geen probleem. De data is onleesbaar zonder de sleutel."
-                ceo_c "Gelukkig. Lessen geleerd."
+                s "Geen paniek, schijf is versleuteld en ik wipe hem nu op afstand."
             else:
-                s "Maar dat hadden we NIET ingesteld. De data staat nu open op een verloren apparaat."
+                s "Maar dat hadden we dus NIET gekocht! De data ligt op straat."
                 $ reputatie -= 20
                 $ security_waarde -= 20
                 $ datalek = True
@@ -460,8 +411,7 @@ label menu_ceo_laptop:
             $ reputatie -= 25
             $ security_waarde -= 25
             $ datalek = True
-            s "Dit is een datalek. We zijn verplicht dit te melden bij de Autoriteit Persoonsgegevens. Dat wordt nieuws."
-            m "Mijn aandelenopties zijn nu waardeloos..."
+            s "Dit is een enorm datalek. De media gaat ons fileren en we krijgen een boete van de AP."
 
     jump deel3_infrastructuur
 
@@ -473,24 +423,22 @@ label deel3_infrastructuur:
     show sarah at left with dissolve
     show mark  at right with dissolve
 
-    "[ DEEL 3 — IT-OMGEVING & INFRASTRUCTUUR ]"
-    s "Nu de infrastructuurlaag. Hier zitten de echte schaakstukken."
+    "[[ DEEL 3 — IT-OMGEVING & INFRASTRUCTUUR ]"
 
     ## --- 7A: Wifi ---
 label menu_wifi:
-    s "Het bedrijfsnetwerk heeft één wifi-netwerk: medewerkers, bezoekers en servers zitten er allemaal op."
-    m "We hebben toch een wachtwoord erop? 'NeXio2019'. Staat op elk vergaderscherm."
+    s "Het wifi-wachtwoord 'NeXio2019' wordt door medewerkers én gasten gebruikt op hetzelfde netwerk."
 
     menu:
-        "Netwerksegmentatie: apart gastnet, medewerkers-net, server-net (-€25.000)":
-            if budget - 25000 < 0:
-                m "Budget te laag, overslaan."
+        "802.1x implementatie & volledige netwerksegmentatie (-€60.000)":
+            if budget < 60000:
+                m "Geen budget."
                 $ onveilige_wifi = True
                 jump menu_firewall
-            $ budget -= 25000
+            $ budget -= 60000
             $ security_waarde += 30
             $ onveilige_wifi = False
-            s "Ideaal. Een bezoeker die malware meebrengt kan nooit bij onze productiesystemen."
+            s "Iedereen authenticeert nu individueel. Gasten krijgen een compleet geïsoleerde verbinding."
         
         "Alleen het wifi-wachtwoord aanpassen (+€0)":
             $ onveilige_wifi = True
@@ -500,47 +448,39 @@ label menu_wifi:
         "Laat alles zoals het is (+€0)":
             $ onveilige_wifi = True
             $ security_waarde -= 25
-            s "'NeXio2019' staat op elk vergaderscherm. Een bezoeker kan met vijf minuten werk ons volledige netwerk scannen."
+            s "Letterlijk iedereen die op de parkeerplaats staat kan inbreken op onze servers."
 
     ## --- 7B: Firewall & monitoring ---
 label menu_firewall:
-    s "We hebben een basisrouter met ingebouwde firewall. Geen intrusion detection, geen logging, geen alerts."
-    m "Die router doet zijn werk al tien jaar. Wat wil je meer?"
+    s "We hebben geen actieve monitoring. Als we gehackt worden, merken we het pas als alles versleuteld is."
 
     menu:
-        "Next-Gen Firewall + SIEM monitoring (-€80.000/jaar)":
-            if budget - 80000 < 0:
-                jump lening_firewall
-            $ budget -= 80000
+        "Next-Gen Firewall + 24/7 Managed SOC / SIEM (-€350.000)":
+            if budget < 350000:
+                m "Budget te laag. Lening van €400.000 (terugbetalen: €480.000) nodig."
+                menu:
+                    "Accepteer lening":
+                        $ aantal_leningen += 1
+                        $ budget += 400000
+                        $ lening += 480000
+                    "Weiger lening":
+                        s "We kunnen dit niet betalen."
+                        jump menu_firewall
+                        
+            $ budget -= 350000
             $ security_waarde += 50
-            s "Nu kunnen we aanvallen in real-time detecteren en automatisch blokkeren. Dit is de gouden standaard."
+            s "Een extern team monitort ons netwerk nu 24/7. De heilige graal van cybersecurity."
         
-        "Basis firewall-upgrade (-€15.000)":
-            $ budget -= 15000
+        "Alleen een nieuwe basale Firewall installeren (-€60.000)":
+            $ budget -= 60000
             $ security_waarde += 20
-            s "Beter. Maar we missen detection-mogelijkheden. Als ze eenmaal binnen zijn, merken we het te laat."
+            s "Beter, maar zonder een SOC (Security Operations Center) kijkt er niemand naar de waarschuwingen."
         
         "Niets doen (+€0)":
             $ security_waarde -= 30
-            s "Een aanvaller kan wekenlang rondlopen in ons netwerk zonder dat we het weten. Gemiddeld duurt het 200 dagen voor een lek ontdekt wordt."
-            m "200 dagen?! Dat meen je niet..."
-            s "Helaas wel."
+            s "Gemiddeld zit een hacker 200 dagen in je netwerk voor hij toeslaat. Wij zijn letterlijk blind."
 
     jump deel4_applicaties
-
-label lening_firewall:
-    m "Budget te laag. Lening van €100.000 (terugbetalen: €120.000)?"
-    menu:
-        "Accepteer":
-            $ aantal_leningen += 1
-            $ budget += 100000
-            $ lening += 120000
-        "Weiger, neem basis-upgrade":
-            $ budget -= 15000
-            $ security_waarde += 20
-            s "Basis-upgrade het is dan."
-            jump deel4_applicaties
-    jump menu_firewall
 
 ################################################################################
 ## 8. DEEL 4: Applicaties & Data
@@ -550,54 +490,49 @@ label deel4_applicaties:
     show sarah at left with dissolve
     show mark  at right with dissolve
 
-    "[ DEEL 4 — APPLICATIES & DATA ]"
-    s "Bijna klaar met de preventieve maatregelen. Dan nu de applicatielaag."
+    "[[ DEEL 4 — APPLICATIES & DATA ]"
 
     ## --- 8A: Sketchy software ---
 label menu_sketchy_software:
-    s "De financiële afdeling wil een software-pakket voor rapportage. Er is een gratis 'cracked' versie online, of we betalen €12.000 voor de licentie."
+    s "Finance wil software. Ze vonden een gratis 'cracked' versie of een Enterprise licentie van €45.000."
     m "Gratis is toch gratis? Het is exact dezelfde software!"
-    w "Ik heb die gratis versie zelf ook al gebruikt thuis..."
 
     menu:
-        "Koop officiële licentie (-€12.000)":
-            $ budget -= 12000
+        "Koop officiële Enterprise licentie (-€45.000)":
+            $ budget -= 45000
             $ security_waarde += 15
-            s "Verstandig. Geen verborgen malware, support inbegrepen, updates automatisch."
+            s "Verstandig. Geen malware, en we hebben recht op enterprise support."
         
         "Download de gratis cracked versie (+€0)":
             $ sketchy_software = True
             $ security_waarde -= 35
-            s "Cracked software is een van de meest gebruikte methodes om malware te verspreiden. We installeren potentieel een backdoor op 40 werkstations."
-            m "Maar het bespaart €12.000!"
+            s "Gefeliciteerd, we hebben zojuist vrijwillig een Russische backdoor op de finance-systemen gezet."
 
     ## --- 8B: Pentesting ---
 label menu_pentest:
-    s "We lanceren volgende maand een nieuwe klanten-webapplicatie. Wil je externe ethische hackers inhuren om die te testen voor we live gaan?"
-    m "Wachten op hackers die ons BETAALD aanvallen? Dat klinkt achterlijk."
-    s "Het heet een penetratietest. Ze zoeken lekken zodat echte hackers ze niet als eerste vinden."
+    s "We lanceren een nieuwe klantenportal. Willen we een externe partij inhuren voor een penetratietest?"
 
     menu:
-        "Ja, externe pentest inhuren (-€45.000)":
-            if budget - 45000 < 0:
-                m "Budget te laag, overslaan."
+        "Ja, huur een gerenommeerd Red Team in (-€60.000)":
+            if budget < 60000:
+                m "Budget te laag."
                 $ pen_test_gedaan = False
                 jump deel5_phishing
-            $ budget -= 45000
+                
+            $ budget -= 60000
             $ security_waarde += 40
             $ pen_test_gedaan = True
-            s "Uitstekend. Ze vonden drie kritieke kwetsbaarheden. Allemaal gedicht voor de lancering."
-            m "Oké, dat was achteraf toch de moeite waard."
+            s "Top. Ze hebben 2 kritieke SQL-injecties gevonden die we direct gefixt hebben."
         
         "Nee, intern team doet een snelle check (+€0)":
             $ pen_test_gedaan = False
             $ security_waarde += 5
-            s "Intern team mist de tools en ervaring. We missen waarschijnlijk complexe kwetsbaarheden."
+            s "Intern team mist de hacker-mindset en tools. We gaan dingen missen."
         
         "Nee, we lanceren gewoon (+€0)":
             $ pen_test_gedaan = False
             $ security_waarde -= 20
-            s "Een ongeteste applicatie in productie. Elke scriptkiddie kan die scannen op dag één."
+            s "Elke scriptkiddie kan die portaal morgen overnemen."
 
     jump deel5_phishing
 
@@ -608,46 +543,41 @@ label deel5_phishing:
     scene bg ceo_office with dissolve
     show ceo_c at center with dissolve
 
-    "[ DEEL 5 — MENSELIJKE FOUTEN ]"
-    "Een donderdagmiddag. De CEO zit alleen in zijn kantoor. Er komt een e-mail binnen met HOGE PRIORITEIT."
+    "[[ DEEL 5 — MENSELIJKE FOUTEN ]"
+    "Een donderdagmiddag. Je zit in je kantoor. Een mail met HOGE PRIORITEIT plopt binnen."
 
-    mail "VAN: sarah.itconsultant.nexio@gmai1.com\nAAN: ceo@nexio-co.com\nONDERWERP: URGENT: Server licenties verlopen VANDAAG!"
-    mail "Beste,\n\nIk zit vast in een noodvergadering met een leverancier en mijn bank-app blokkeert internationale betalingen."
-    mail "De factuur voor onze kritieke cloudomgeving moet VOOR 17:00 betaald zijn. Anders gaan alle servers offline en verliezen we alle klantdata van het kwartaal!"
-    mail "Kun jij direct €22.500 overmaken naar:\nNL99 SCAM 0123 4567 89\n\nAlvast veel dank!\nSarah\n— Verstuurd via iPhone"
+    mail "VAN: sarah.itconsultant.nexio@gmai1.com\nAAN: ceo@nexio-co.com\nONDERWERP: URGENT: Cloud factuur"
+    mail "Beste,\n\nOnze AWS cloudservers gaan offline als de achterstallige factuur niet voor 17:00 is voldaan."
+    mail "Mijn bank blokkeert overboekingen momenteel. Maak direct €185.000 over naar:\nNL99 SCAM 0123 4567 89\n\nGroet, Sarah"
 
     menu:
-        "Maak direct €22.500 over om downtime te voorkomen (-€22.500)":
-            if budget - 22500 < 0:
-                "De transactie mislukt wegens onvoldoende saldo. Je bent ongelooflijk gelukkig geweest."
+        "Maak direct €185.000 over om downtime te voorkomen (-€185.000)":
+            if budget < 185000:
+                "Saldo te laag. Je hebt puur geluk gehad."
             else:
-                $ budget -= 22500
+                $ budget -= 185000
                 $ reputatie -= 20
                 $ phishing_gebeten = True
-                "Je maakt het geld over."
                 show sarah at left with dissolve
-                s "Eh... CSO? Ik heb u vandaag helemaal geen mail gestuurd. Ik zit hier gewoon aan mijn bureau."
-                "Je maag draait om. CEO Fraude. Het geld is weg. De daders zijn onvindbaar."
+                s "CSO? U heeft zojuist €185.000 naar een onbekende rekening in Cyprus gestuurd. Ik heb die mail nooit verstuurd."
 
         "Stuur naar spam en negeer (+€0)":
             $ security_waarde += 5
-            "Je verwijdert de mail zonder verdere actie."
             show sarah at left with dissolve
-            s "Goed gedaan! Kijk: het e-mailadres is 'gmai1.com' — met een cijfer 1 in plaats van een L. Klassieke truc."
+            s "Goed gezien. Het adres is 'gmai1.com'. Klassieke truc."
 
         "Bel Sarah direct om te verifiëren (+€0, beste optie)":
             $ security_waarde += 20
             show sarah at left with dissolve
-            s "Hallo? Mail? Nee hoor, ik heb u niks gestuurd. Dit is een Whaling-aanval (CEO Fraud). Zet het adres in quarantaine!"
-            s "Dit is precies waarom we nooit mogen handelen onder kunstmatige tijdsdruk. Altijd verifiëren via een ander kanaal."
-
+            s "Whaling-aanval (CEO Fraude)! Niet betalen. Ik blokkeer de afzender direct op de mailservers."
+            
         "Betaal en stuur tegelijk een waarschuwing naar IT (+€0)":
-            $ budget -= 22500
+            $ budget -= 185000
             $ reputatie -= 10
             $ phishing_gebeten = True
             $ security_waarde -= 10
             show sarah at left with dissolve
-            s "U heeft al betaald... De waarschuwing is te laat. En die rekening is nep."
+            s "U heeft al betaald... De waarschuwing is te laat. Dat geld is weg."
 
     jump de_aanval
 
@@ -656,35 +586,30 @@ label deel5_phishing:
 ################################################################################
 label de_aanval:
     scene bg server_room with pixellate
-    "[ KWARTAAL EINDIGT — DE AANVAL BEGINT ]"
+    "[[ KWARTAAL EINDIGT — DE AANVAL BEGINT ]"
     "Drie maanden later. Midden in de nacht gaat uw telefoon."
 
-    ## Zwaarste scenario: zelfde wachtwoord
     if wachtwoorden_gelijk:
         with hpunch
         scene bg hack_attack with Fade(0.1, 0.0, 0.5, color="#ff0000")
         show sarah at left
-        s "CSO!! CRISIS! Een medewerker is gephisht en zijn database-wachtwoord '[ww_database]' is uitgelekt!"
-        s "Omdat u voor het Admin-paneel EXACT HETZELFDE wachtwoord had gebruikt, hebben de hackers nu volledige controle over alle systemen van [bedrijfsnaam]!"
-        s "Ze versleutelen alles. RANSOMWARE. Alles ligt plat."
+        s "CSO!! CRISIS! Een medewerker is gephisht. Omdat u voor het Admin-paneel EXACT HETZELFDE wachtwoord ('[ww_database]') had gebruikt, zijn ze overal binnen!"
+        s "RANSOMWARE. Ze eisen 2 Miljoen euro in Bitcoin!"
         $ datalek = True
-        $ budget -= 500000
+        $ budget -= 2000000
         $ reputatie -= 95
 
     elif dom_wachtwoord:
         with hpunch
         scene bg hack_attack with Fade(0.1, 0.0, 0.5, color="#ff0000")
         show sarah at left
-        s "Een brute-force script raadde het admin-wachtwoord '[ww_admin]' in drie seconden. Ze zijn volledig binnen."
+        s "Ze brute-forceden uw zwakke admin wachtwoord ('[ww_admin]') in drie seconden. Alles versleuteld!"
         $ datalek = True
-        $ budget -= 300000
+        $ budget -= 1500000
         $ reputatie -= 70
 
     else:
-        ## Bereken aanvalkracht op basis van specifieke zwakheden
         $ aanval_kracht = renpy.random.randint(30, 70)
-
-        ## Bonus aanvalskracht per zwakheid
         if sketchy_software:
             $ aanval_kracht += 20
         if onveilige_iot:
@@ -706,11 +631,9 @@ label de_aanval:
 
         if security_waarde >= aanval_kracht:
             show sarah at left with dissolve
-            s "CSO! We worden aangevallen — maar onze systemen houden stand!"
+            s "CSO! Ze probeerden binnen te komen, maar onze SOC en firewalls hielden ze tegen! Het netwerk is een fort!"
             if pen_test_gedaan:
-                s "De kwetsbaarheden die we bij de pentest vonden en dichtten... ze probeerden er exact doorheen te komen. Goed dat we dat hadden gedaan."
-            if heeft_mfa:
-                s "MFA blokkeerde meerdere gecompromitteerde wachtwoorden automatisch."
+                s "Ze probeerden precies die SQL-injectie die we na de pentest hebben gedicht."
             $ reputatie += 10
             if reputatie > 100:
                 $ reputatie = 100
@@ -718,26 +641,14 @@ label de_aanval:
             with hpunch
             scene bg hack_attack with Fade(0.1, 0.0, 0.5, color="#ff0000")
             show sarah at left
-
             if sketchy_software:
-                s "De backdoor in de cracked software gaf ze al drie weken onopgemerkte toegang..."
-                $ budget -= 200000
-                $ datalek = True
-                $ reputatie -= 50
-            elif onveilige_iot:
-                s "Ze kwamen binnen via een IP-camera met het standaard wachtwoord 'admin'. Vandaar konden ze het hele netwerk bereiken."
-                $ budget -= 150000
-                $ datalek = True
-                $ reputatie -= 40
+                s "De backdoor in de cracked software gaf ze onopgemerkt toegang..."
             elif updates_genegeerd:
-                s "Ze gebruikten een patch die al 4 maanden beschikbaar was maar die wij nooit hadden geïnstalleerd."
-                $ budget -= 120000
-                $ reputatie -= 35
-            else:
-                s "Ze zijn via een zwak punt binnengedrongen. Alles ligt plat. Klantdata is buitgemaakt."
-                $ budget -= 100000
-                $ datalek = True
-                $ reputatie -= 30
+                s "Ze gebruikten een patch die we weigerden te installeren."
+            s "De firewalls zijn doorbroken. Ze hebben de hele productiedatabase gekopieerd en versleuteld."
+            $ budget -= 1200000
+            $ datalek = True
+            $ reputatie -= 50
 
     jump eindscherm
 
@@ -748,39 +659,37 @@ label eindscherm:
     hide screen status_overlay
     scene bg news_flash with dissolve
 
-    "[ HET OORDEEL VAN DE RAAD VAN BESTUUR ]"
+    "[[ HET OORDEEL VAN DE RAAD VAN BESTUUR ]"
     ""
     "Eindbudget:    € [budget:,d]"
     if lening > 0:
         "Uitstaande schuld: € [lening:,d]"
-    "Publieke reputatie: [reputatie]%"
+    "Publieke reputatie: [reputatie]%%"
     "Security score: [security_waarde] punten"
 
-    if wachtwoorden_gelijk:
-        news "BREAKING: Hackers wandelen bij [bedrijfsnaam] naar binnen dankzij hergebruikt wachtwoord '[ww_admin]'. CSO ontslagen."
+    if wachtwoorden_gelijk or dom_wachtwoord:
+        news "BREAKING: Megaboete Autoriteit Persoonsgegevens voor NeXio & Co wegens laks wachtwoordbeleid."
         "U bent direct ontslagen. Het incident staat in alle vakbladen als schoolvoorbeeld van wat niet moet."
     elif datalek and reputatie < 20:
-        news "BREAKING: Massaal datalek bij [bedrijfsnaam]. Klanten klagen bedrijf aan. Aandelenkoers keldert 60%."
+        news "BREAKING: Massaal datalek bij [bedrijfsnaam]. Klanten klagen bedrijf aan. Aandelenkoers keldert 60%%."
         "U bent op staande voet ontslagen. Het herstel kost het bedrijf miljoenen."
     elif datalek:
-        news "BREAKING: Hack bij [bedrijfsnaam] legt systemen plat. Klantdata gestolen."
+        news "BREAKING: Ransomware-aanval kost NeXio & Co miljoenen. Klantdata gestolen."
         "U bent ontslagen wegens nalatigheid. De aanval had voorkomen kunnen worden."
     elif lening > budget:
-        "U heeft de hack weerstaan — maar de schulden overtreffen de kas. [bedrijfsnaam] is technisch failliet."
+        "U heeft de hack weerstaan, maar het bedrijf is bedolven onder leningen. De Raad is niet blij."
         "Een pyrrusoverwinning."
     elif reputatie < 40:
         "De hack is voorkomen, maar uw harde bezuinigingen en slechte communicatie hebben de reputatie vernietigd."
-        "Het personeel staakt. Klanten vertrekken. U treedt af."
+        "Het personeel staakt. U treedt af."
     elif reputatie < 70:
         "Een gemengd resultaat. De aanval is deels weerstaan maar er is schade. De Raad houdt u onder toezicht."
-        "Volgende kwartaal moeten de cijfers beter."
     elif security_waarde >= 150:
-        "PERFECTE SCORE. U heeft [bedrijfsnaam] omgetoverd tot een fortress. De aanval stuitte op een muur."
-        "U wordt geroemd als de beste CSO in de sector. Uw budget is intact en de reputatie onbeschadigd."
+        "PERFECTE SCORE. U wordt door vakbladen geroemd als top CSO. Een masterclass in enterprise security."
         news "NeXio & Co weerhoudt massale cyberaanval: 'We waren klaar.'"
     else:
-        "U heeft de aanval overleefd. Budget intact, reputatie solide, medewerkers tevreden."
-        "De Raad verlengt uw contract voor twee jaar. Goed gedaan, CSO."
+        "De hack is voorkomen en het bedrijf is veilig. Goed gedaan, CSO."
+        "De Raad verlengt uw contract voor twee jaar."
 
-    "[ EINDE — Start opnieuw voor een andere aanpak ]"
+    "[[ EINDE ]"
     return
